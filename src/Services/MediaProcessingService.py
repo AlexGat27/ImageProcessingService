@@ -20,20 +20,14 @@ class MediaProcessingService:
         image = cv2.resize(image, (640, 640))
         tensor_image = ToTensor()(image).unsqueeze(0)
         result = self.model(tensor_image)[0]
-        for i in range(len(result.boxes)):
+        boxes_data = result.boxes.data.cpu().numpy()
+        boxes = np.asarray([box[:4] for box in boxes_data], dtype=int)
+        print(boxes_data)
+
+        for box in boxes:
             potholesData.append({
-                "nametable": "pothole",
-                "street": random.choice(config.street),
-                "lat": random.uniform(3360000, 3400000),
-                "lon": random.uniform(8370000, 8400000),
-                "class": random.randint(1,4)
+                'x': str((box[0] + box[2]) // 2),
+                'y': str((box[1] + box[3]) // 2)
             })
-            # database.insert_to_table(nametable, time_detect, random.choice(__street),
-            #                           random.uniform(3360000, 3400000), random.uniform(8370000, 8400000), random.randint(1,4))
-        annotated_frame = result.plot()
-        annotated_frame = cv2.resize(annotated_frame, (w, h))
 
-        retval, buffer = cv2.imencode('.jpg', annotated_frame)
-        output_buffer = buffer.tobytes()
-
-        return output_buffer, potholesData
+        return potholesData

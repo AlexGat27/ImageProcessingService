@@ -4,4 +4,4 @@ support_model_ext = ['torchscript', 'pt', 'onnx', 'engine', 'mlmodel', 'pb', 'tf
 #Рандомные улицы
 street = ['Ushakova', 'Kirovogradskaia', 'Naximova', 'Zakamskaia', 'Ribalko', 'Astraxanskaia']
 
-model_path = "C:/Users/sanya/Develop/GeosystemApp/media-processing/Resources/best.pt"
+model_path = "E:/Develop/ImageProcessingService/Resources/best.pt"
