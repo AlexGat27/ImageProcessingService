@@ -5,12 +5,11 @@ from ultralytics import YOLO
 from torchvision.transforms import ToTensor
 from src.Services.ImageSaverService import ImageSaverService
 
-class MediaProcessingService:
+class ModelProcessing:
     def __init__(self):
         self.model = YOLO(config.model_path)
-        self.imageSaver = ImageSaverService("Assets/Processed_images")
 
-    def imageProcessing(self, file):
+    def modelProcessing(self, file):
         potholesData = []
 
         # image_np = np.frombuffer(file.read(), np.uint8)
@@ -26,15 +25,6 @@ class MediaProcessingService:
         self.imageSaver.saveImage(image2save)
 
         boxes_data = result.boxes.data.cpu().numpy()
-        boxes = np.asarray([box[:4] for box in boxes_data], dtype=float)
-        boxes[:, ::2], boxes[:, 1::2] = boxes[:, ::2] / 640 * w - w/2, boxes[:, 1::2] / 640 * h - h/2
-        # print(boxes_data)
-        # print(boxes)
-
-        for box in boxes:
-            potholesData.append({
-                'x': str((box[0] + box[2]) // 2),
-                'y': str((box[1] + box[3]) // 2)
-            })
-        print(potholesData)
-        return potholesData
+        boxes_data[:, ::2] = boxes_data[:, ::2] / 640 * w - w/2
+        boxes_data[:, 1::2] = boxes_data[:, 1::2] / 640 * h - h/2
+        return result.plot(), boxes_data

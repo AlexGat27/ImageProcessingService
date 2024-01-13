@@ -162,7 +162,7 @@ cython_debug/
 .venv/
 *.pt
 
-*.pyc
+*.pyc*
 __pycache__/
 # Ignore environment-specific settings
 .env
