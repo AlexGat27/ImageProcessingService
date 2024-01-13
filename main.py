@@ -9,7 +9,7 @@ port = 5000
 @app.post('/imageProcessing')
 def process_media():
     mediaCtrl = MediaProcessingCtrl()
-    data2send = mediaCtrl.process_media(request)
+    data2send = mediaCtrl.unity_process_media(request)
     return jsonify(data2send)
 
 if __name__ == '__main__':
