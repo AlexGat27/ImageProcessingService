@@ -9,8 +9,6 @@ class ModelProcessing:
         self.model = YOLO(config.model_path)
 
     def modelProcessing(self, file):
-        potholesData = []
-
         # image_np = np.frombuffer(file.read(), np.uint8)
         image = cv2.imdecode(file, cv2.IMREAD_COLOR)
 

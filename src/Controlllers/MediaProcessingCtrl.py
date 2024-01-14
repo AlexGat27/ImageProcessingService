@@ -1,5 +1,5 @@
 import numpy as np
-from src.Services.ImageSaverService import ImageSaverService
+from src.Services.ImageSaverService import ImageSaver
 from src.Services.ModelProcessingService import ModelProcessing
 from src.Services.CRSConverterService import CRSConverter
 from src.Services.Pixels2MetresConverterService import Pixels2MetresConverter
@@ -11,9 +11,9 @@ class MediaProcessingCtrl:
         self._data2send = np.array([[{'x': 0, 'y': 0},
                                         {'x': 0, 'y': 0}]])
         self._mediaService = ModelProcessing()
-        self._imageSaver = ImageSaverService("Assets/Processed_images")
+        self._imageSaver = ImageSaver("Assets/Processed_images")
 
-    def unity_process_media(self, req: Request):
+    def UnityProcessMedia(self, req: Request):
         file = req.files["image"].read()
         cameraFieldOfView = self.__convertReqType(req.form["fieldOfView"], float)
         cameraHeight = self.__convertReqType(req.form["cameraHeight"], float)
@@ -25,7 +25,7 @@ class MediaProcessingCtrl:
         new_image_np = np.frombuffer(file, np.uint8)
 
         result_image, potholesData, _ = self._mediaService.modelProcessing(new_image_np)
-        self._imageSaver.saveImage(result_image)
+        self._imageSaver.SaveImage(result_image)
         potholes_coordinates_3857 = Pixels2MetresConverter.ConvertProcessing(potholesData, camFieldOfView=cameraFieldOfView, 
         camAzimut=cameraAzimut, camHeight=cameraHeight, camResolution=screenResolution) + cameraPosition3857
         potholes_coordinates_4326 = CRSConverter.Epsg3857To4326(potholes_coordinates_3857)
