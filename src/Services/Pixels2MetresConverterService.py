@@ -6,9 +6,10 @@ class Pixels2MetresConverter:
     def ConvertProcessing(items_data: np.array, camResolution: np.array, 
     camFieldOfView, camHeight, camAzimut):
         items_coords_image = Pixels2MetresConverter.__centralizeCoordsItems(items_data)
-        items_coords_image_azumut = Pixels2MetresConverter.__applyAzimutTranformation(items_coords_image, camAzimut)
-        return Pixels2MetresConverter.__convertPixels2Metres(items_coords_image_azumut,
+        items_coords_metres = Pixels2MetresConverter.__convertPixels2Metres(items_coords_image,
         camResolution, camFieldOfView, camHeight)
+        items_coords_image_azumut = Pixels2MetresConverter.__applyAzimutTranformation(items_coords_metres, camAzimut)
+        return items_coords_image_azumut
 
 
     def __centralizeCoordsItems(items_data: np.array):
@@ -28,10 +29,13 @@ class Pixels2MetresConverter:
         return centralize_coords
 
     def __applyAzimutTranformation(coords_metres: np.array, camAzimut):
-        radAzimut = camAzimut * np.pi / 180
+        radAzimut = -camAzimut * np.pi / 180
         for coords in coords_metres:
-            coords[0] = coords[0] * np.cos(radAzimut) - coords[1] * np.sin(radAzimut)
-            coords[1] = coords[0] * np.sin(radAzimut) + coords[1] * np.cos(radAzimut)
+            x = coords[0]
+            y = coords[1]
+            coords[0] = x * np.cos(radAzimut) - y * np.sin(radAzimut)
+            coords[1] = x * np.sin(radAzimut) + y * np.cos(radAzimut)
+            print(coords[0], x, coords[1], y)
         return coords_metres
 
         

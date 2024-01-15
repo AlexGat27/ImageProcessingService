@@ -8,8 +8,8 @@ from flask import Request
 class MediaProcessingCtrl:
 
     def __init__(self):
-        self._data2send = np.array([[{'x': 0, 'y': 0},
-                                        {'x': 0, 'y': 0}]])
+        self._data2send = np.array([{'crs3857': {'x': 0, 'y': 0},
+                                    'crs4326': {'x': 0, 'y': 0}}])
         self._mediaService = ModelProcessing()
         self._imageSaver = ImageSaver("Assets/Processed_images")
 
@@ -30,10 +30,10 @@ class MediaProcessingCtrl:
         camAzimut=cameraAzimut, camHeight=cameraHeight, camResolution=screenResolution) + cameraPosition3857
         potholes_coordinates_4326 = CRSConverter.Epsg3857To4326(potholes_coordinates_3857)
         for coord3857, coord4326 in zip(potholes_coordinates_3857, potholes_coordinates_4326):
-            self._data2send = np.vstack((self._data2send, [{'x': coord3857[0], 'y': coord3857[1]},
-                                        {'x': coord4326[0], 'y': coord4326[1]}]))
+            self._data2send = np.append(self._data2send, {'crs3857': {'x': coord3857[0], 'y': coord3857[1]},
+                                        'crs4326': {'x': coord4326[0], 'y': coord4326[1]}})
         print(self._data2send[1:])
-        return {'vectors': self._data2send[1:].tolist()}
+        return self._data2send[1:].tolist()
     
     def __convertReqType(self, req, _type: type):
         if type(req) == str:
