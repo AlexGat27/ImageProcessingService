@@ -1,15 +1,20 @@
 from flask import Flask, request, jsonify, abort
-from src.Controlllers.MediaProcessingCtrl import MediaProcessingCtrl
-import base64
-import numpy as np
+from Controllers.UnityProcessingCtrl import UnityProcessingCtrl as UnitCtrl
+from Controllers.WebImageProcessingCtrl import WebImageProcessingCtrl as WebCtrl
 
 app = Flask(__name__)
 port = 5000
 
-@app.post('/imageProcessing')
-def process_media():
-    mediaCtrl = MediaProcessingCtrl()
-    data2send = mediaCtrl.UnityProcessMedia(request)
+@app.post('/imageProcessing/unity')
+def UnityProcessMedia():
+    unitCtrl = UnitCtrl()
+    data2send = unitCtrl.MediaProcessing(request)
+    return jsonify(data2send)
+
+@app.post('/imageProcessing/GeosystemApp')
+def UnityProcessMedia():
+    webCtrl = WebCtrl()
+    data2send = webCtrl.MediaProcessing(request)
     return jsonify(data2send)
 
 if __name__ == '__main__':
