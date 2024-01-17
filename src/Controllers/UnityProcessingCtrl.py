@@ -1,4 +1,4 @@
-from MediaProcessingInterface import *
+from src.Controllers.MediaProcessingInterface import *
 from src.Services.ImageSaverService import ImageSaver
 from src.Services.ModelProcessingService import ModelProcessing
 from src.Services.CRSConverterService import CRSConverter

@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, abort
-from src.Controllers.UnityProcessingCtrl import UnityProcessingCtrl as UnitCtrl
-from src.Controllers.WebImageProcessingCtrl import WebImageProcessingCtrl as WebCtrl
-from src.Controllers.VideoProcessingCtrl import VideoProcessingCtrl as VideoCtrl
+from Controllers.UnityProcessingCtrl import UnityProcessingCtrl as UnitCtrl
+from Controllers.WebImageProcessingCtrl import WebImageProcessingCtrl as WebCtrl
 
 app = Flask(__name__)
 port = 6000

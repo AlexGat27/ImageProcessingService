@@ -3,7 +3,7 @@ import random
 import src.Config.config as config
 from src.Controllers.MediaProcessingInterface import *
 from src.Services.ModelProcessingService import ModelProcessing
-from src.Middlewares.CheckSimilarImagesService import CheckSimilarImagesService
+from src.Middlewares.CheckSimilarImages import CheckSimilarImages
 
 class WebImageProcessingCtrl():
 
@@ -14,7 +14,7 @@ class WebImageProcessingCtrl():
             'potholesData': None,
             'imageUrl': None
         }
-        self.checkService = CheckSimilarImagesService()
+        self.checkService = CheckSimilarImages()
         self.modelProcessing = ModelProcessing()
 
     def MediaProcessing(self, req: Request):
