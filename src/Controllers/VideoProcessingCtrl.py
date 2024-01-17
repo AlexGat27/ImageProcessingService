@@ -1,4 +1,4 @@
-from MediaProcessingInterface import *
+from src.Controllers.MediaProcessingInterface import *
 from src.Services.DistTracker import DistTracker 
 from src.Services.ModelProcessingService import ModelProcessing
 from src.Middlewares.IOUHandler import IOUHandler

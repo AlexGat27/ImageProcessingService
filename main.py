@@ -1,20 +1,26 @@
 from flask import Flask, request, jsonify, abort
-from Controllers.UnityProcessingCtrl import UnityProcessingCtrl as UnitCtrl
-from Controllers.WebImageProcessingCtrl import WebImageProcessingCtrl as WebCtrl
+from src.Controllers.UnityProcessingCtrl import UnityProcessingCtrl as UnitCtrl
+from src.Controllers.WebImageProcessingCtrl import WebImageProcessingCtrl as WebCtrl
 
 app = Flask(__name__)
-port = 5000
+port = 6000
 
-@app.post('/imageProcessing/unity')
-def UnityProcessMedia():
-    unitCtrl = UnitCtrl()
-    data2send = unitCtrl.MediaProcessing(request)
-    return jsonify(data2send)
-
-@app.post('/imageProcessing/GeosystemApp')
-def UnityProcessMedia():
-    webCtrl = WebCtrl()
-    data2send = webCtrl.MediaProcessing(request)
+@app.post('/imageProcessing')
+def ProcessMedia():
+    platform = request.args.get("platform")
+    if platform == "Unity":
+        print("Get request from Unity")
+        unitCtrl = UnitCtrl()
+        data2send = unitCtrl.MediaProcessing(request)
+    elif platform == "GeosystemApp":
+        print("Get request from App")
+        webCtrl = WebCtrl()
+        data2send = webCtrl.MediaProcessing(request)
+    else: 
+        data2send = {
+            'status': 400,
+            'message': "Неверные параметры запроса",
+        }
     return jsonify(data2send)
 
 if __name__ == '__main__':

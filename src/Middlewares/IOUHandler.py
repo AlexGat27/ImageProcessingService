@@ -19,6 +19,7 @@ class IOUHandler:
 
     @staticmethod
     def RemoveSmallBoxes(boxes: np.array, ioulimit):
+        del_boxes_ids = []
         if boxes.shape[0] <= 1:
             return boxes    
         for i in range(boxes.shape[0] - 1):
@@ -30,7 +31,8 @@ class IOUHandler:
                     area_j = (boxes[j][2] - boxes[j][0] + 1) * (boxes[j][3] - boxes[j][1] + 1)
                     
                     if area_i < area_j:
-                        boxes = np.delete(boxes, (i), axis=0)
+                        del_boxes_ids.append(i)
                     else:
-                        boxes = np.delete(boxes, (j), axis=0)
+                        del_boxes_ids.append(j)
+        boxes = np.delete(boxes, del_boxes_ids, axis=0)
         return boxes

@@ -7,6 +7,7 @@ from src.Middlewares.IOUHandler import IOUHandler
 class ModelProcessing:
     def __init__(self):
         self.model = YOLO(config.model_path)
+        self.__ioulimit = 0.3
 
     def DetectingObjects(self, file, platform: str):
         # image_np = np.frombuffer(file.read(), np.uint8)
@@ -19,7 +20,8 @@ class ModelProcessing:
         result = self.model(tensor_image)[0]
 
         boxes_data = result.boxes.data.cpu().numpy()
-        boxes_data = IOUHandler.RemoveSmallBoxes(boxes_data)
+        print(boxes_data)
+        boxes_data = IOUHandler.RemoveSmallBoxes(boxes_data, self.__ioulimit)
         bboxes = boxes_data[:, :4]
         bboxes[:, ::2] = bboxes[:, ::2] / 640 * w
         bboxes[:, 1::2] = bboxes[:, 1::2] / 640 * h
