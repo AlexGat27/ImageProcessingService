@@ -17,7 +17,6 @@ class DistTracker:
             same_object_detected = False
             for id, pt in self.bbox_ids.items():
                 iou = IOUHandler.IntersectionOverUnion(rect, pt)
-                print(iou)
                 if iou > self.IOU_UP:
                     self.bbox_ids[id] = (x1, y1, x2, y2)
                     objects_bbs_ids.append([x1, y1, x2, y2, id])

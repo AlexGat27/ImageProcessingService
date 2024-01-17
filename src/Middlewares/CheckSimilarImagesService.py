@@ -6,7 +6,7 @@ class CheckSimilarImagesService:
         self.sift = cv2.SIFT_create()
         self.flanMatcher = cv2.FlannBasedMatcher()
 
-    def __compare_images_with_perspective(self, image, imagePathsToCompare):
+    def _compare_images_with_perspective(self, image, imagePathsToCompare):
 
         gray_image1 = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         keypoints1, descriptors1 = self.sift.detectAndCompute(gray_image1, None)
@@ -26,7 +26,7 @@ class CheckSimilarImagesService:
     def CheckSimilarity(self, new_image_file, old_image_paths: list):
         new_image = cv2.imdecode(new_image_file, cv2.IMREAD_COLOR)
         h, w = new_image.shape[0], new_image.shape[1]
-        if self.__compare_images_with_perspective(new_image, old_image_paths):
+        if self._compare_images_with_perspective(new_image, old_image_paths):
             return True
         return False
     

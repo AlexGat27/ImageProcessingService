@@ -11,6 +11,5 @@ class ImageSaver:
         if not(os.path.exists(self.saveFolder)):
             os.makedirs(self.saveFolder)
         countFiles = len(os.listdir(self.saveFolder))
-        print(self.saveFolder + f'/process_image{countFiles}')
         cv2.imwrite(self.saveFolder + f'/process_image_{countFiles}.png', image)
         print("Succesfuly saving processed image")

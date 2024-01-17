@@ -14,25 +14,25 @@ class UnityProcessingCtrl(MediaProcessingInterface):
 
     def MediaProcessing(self, req: Request):
         file = req.files["image"].read()
-        cameraFieldOfView = self.__convertReqType(req.form["fieldOfView"], float)
-        cameraHeight = self.__convertReqType(req.form["cameraHeight"], float)
-        cameraAzimut = self.__convertReqType(req.form["cameraAzimut"], float)
-        cameraPosition3857 = self.__convertReqType([req.form["cameraX"], req.form["cameraY"]], float)
-        screenResolution = self.__convertReqType([req.form["screenWidth"], req.form["screenHeight"]], int)
+        cameraFieldOfView = self._convertReqType(req.form["fieldOfView"], float)
+        cameraHeight = self._convertReqType(req.form["cameraHeight"], float)
+        cameraAzimut = self._convertReqType(req.form["cameraAzimut"], float)
+        cameraPosition3857 = self._convertReqType([req.form["cameraX"], req.form["cameraY"]], float)
+        screenResolution = self._convertReqType([req.form["screenWidth"], req.form["screenHeight"]], int)
 
         new_image_np = np.frombuffer(file, np.uint8)
 
         result_image, potholesData, _ = self._modelService.DetectingObjects(new_image_np, "Unity")
         self._imageSaver.SaveImage(result_image)
-        potholes_coordinates_3857 = Pixels2MetresConverter.ConvertProcessing(potholesData, camFieldOfView=cameraFieldOfView, 
-        camAzimut=cameraAzimut, camHeight=cameraHeight, camResolution=screenResolution) + cameraPosition3857
-        potholes_coordinates_4326 = CRSConverter.Epsg3857To4326(potholes_coordinates_3857)
-        for coord3857, coord4326 in zip(potholes_coordinates_3857, potholes_coordinates_4326):
+        for pothole in potholesData:
+            coord3857 = Pixels2MetresConverter.ConvertProcessing(pothole, camFieldOfView=cameraFieldOfView, 
+            camAzimut=cameraAzimut, camHeight=cameraHeight, camResolution=screenResolution) + cameraPosition3857
+            coord4326 = CRSConverter.Epsg3857To4326(coord3857)
             self._data2send = np.append(self._data2send, {'crs3857': {'x': coord3857[0], 'y': coord3857[1]},
-                                        'crs4326': {'x': coord4326[0], 'y': coord4326[1]}})
+                                    'crs4326': {'x': coord4326[0], 'y': coord4326[1]}})
         return self._data2send[1:].tolist()
     
-    def __convertReqType(self, req, _type: type):
+    def _convertReqType(self, req, _type: type):
         if type(req) == str:
             splitStr = req.split(',')
             if len(splitStr) > 1:
