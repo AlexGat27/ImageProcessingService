@@ -15,7 +15,7 @@ class WebImageProcessingCtrl():
             'imageUrl': None
         }
         self.checkService = CheckSimilarImages()
-        self.modelProcessing = ModelProcessing()
+        self.modelProcessing = ModelProcessing("Web")
 
     def MediaProcessing(self, req: Request):
         if 'image' not in req.files:

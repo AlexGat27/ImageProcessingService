@@ -3,15 +3,16 @@ import src.Config.config as config
 from ultralytics import YOLO
 from torchvision.transforms import ToTensor
 from src.Middlewares.IOUHandler import IOUHandler
+from src.Middlewares.PlatformHandler import PlatformHandler
 
 class ModelProcessing:
-    def __init__(self):
+    def __init__(self, typeRequest):
         self.model = YOLO(config.model_path)
         self.__ioulimit = 0.3
+        self.__typeRequestKey = typeRequest
 
-    def DetectingObjects(self, file, platform: str):
-        # image_np = np.frombuffer(file.read(), np.uint8)
-        image = cv2.imdecode(file, cv2.IMREAD_COLOR)
+    def DetectingObjects(self, file):
+        image = PlatformHandler.ImageRequestTransform(self.__typeRequestKey, file)
 
         h, w, _ = image.shape
 
@@ -20,23 +21,14 @@ class ModelProcessing:
         result = self.model(tensor_image)[0]
 
         boxes_data = result.boxes.data.cpu().numpy()
-        print(boxes_data)
         boxes_data = IOUHandler.RemoveSmallBoxes(boxes_data, self.__ioulimit)
-        bboxes = boxes_data[:, :4]
-        bboxes[:, ::2] = bboxes[:, ::2] / 640 * w
-        bboxes[:, 1::2] = bboxes[:, 1::2] / 640 * h
-
+        boxes_data[:, :4:2] = boxes_data[:, :4:2] / 640 * w
+        boxes_data[:, 1:4:2] = boxes_data[:, 1:4:2] / 640 * h
         annotated_image = image.copy()
         for box in boxes_data:
             x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
             annotated_image = cv2.rectangle(annotated_image, (x1, y1), (x2, y2), (255,0,0), 2)
 
-        if platform == "Web":
-            retval, buffer = cv2.imencode('.jpg', annotated_image)
-            output_buffer = buffer.tobytes()
-            return output_buffer, boxes_data.shape[0]
+        return PlatformHandler.ImageResponseTransform(self.__typeRequestKey, annotated_image, boxes_data)
 
-        bboxes[:, ::2] -= w/2
-        bboxes[:, 1::2] -= h/2
-        return annotated_image, bboxes, boxes_data[:, 4:]
     

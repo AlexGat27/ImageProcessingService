@@ -1,7 +1,7 @@
 from src.Middlewares.IOUHandler import IOUHandler
 
 class DistTracker:
-    IOU_UP = 0.5
+    IOU_UP = 0.4
     STRIDE_UPDATE = 10
 
     def __init__(self):

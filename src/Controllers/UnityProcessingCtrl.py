@@ -1,4 +1,5 @@
 from src.Controllers.MediaProcessingInterface import *
+from src.Config.config import ImagesSavedPath
 from src.Services.ImageSaverService import ImageSaver
 from src.Services.ModelProcessingService import ModelProcessing
 from src.Services.CRSConverterService import CRSConverter
@@ -9,8 +10,8 @@ class UnityProcessingCtrl(MediaProcessingInterface):
     def __init__(self):
         self._data2send = np.array([{'crs3857': {'x': 0, 'y': 0},
                                     'crs4326': {'x': 0, 'y': 0}}])
-        self._modelService = ModelProcessing()
-        self._imageSaver = ImageSaver("Assets/Processed_images")
+        self._modelService = ModelProcessing("Unity")
+        self._imageSaver = ImageSaver(f'{ImagesSavedPath}/UnityImages')
 
     def MediaProcessing(self, req: Request):
         file = req.files["image"].read()
