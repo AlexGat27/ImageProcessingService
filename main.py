@@ -20,8 +20,8 @@ def ProcessImage():
         data2send = webCtrl.MediaProcessing(request)
     elif platform == "Application":
         print('Get request from Application')
-        appCtrl = AppCtrl(True, "ImageApp")
-        data2send = appCtrl.MediaProcessing(request)
+        appCtrl = AppCtrl("ImageApp")
+        data2send = appCtrl.MediaProcessing(request, True)
     else: 
         data2send = {
             'status': 400,
@@ -34,13 +34,28 @@ def ProcessVideo():
     platform = request.args.get("platform")
     if platform == "Application":
         print('Get request from Application')
-        appCtrl = AppCtrl(False, "VideoApp")
-        data2send = appCtrl.MediaProcessing(request)
+        appCtrl = AppCtrl("VideoApp")
+        data2send = appCtrl.MediaProcessing(request, False)
     else: 
         data2send = {
             'status': 400,
             'message': "Неверные параметры запроса",
         }
+    return jsonify(data2send)
+
+@app.post('/videoSplit')
+def SplitVideo():
+    platform = request.args.get("platform")
+    if platform == "Application":
+        print('Get request from Application')
+        appCtrl = AppCtrl("VideoApp")
+        data2send = appCtrl.SplitVideo(request, False)
+    else: 
+        data2send = {
+            'status': 400,
+            'message': "Неверные параметры запроса",
+        }
+    print(data2send)
     return jsonify(data2send)
 
 if __name__ == '__main__':

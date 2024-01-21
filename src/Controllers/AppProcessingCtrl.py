@@ -1,25 +1,31 @@
 from src.Controllers.MediaProcessingInterface import *
-from src.Middlewares.IOUHandler import IOUHandler
 from src.Config.config import ImagesSavedPath
 from src.Services.DistTracker import DistTracker 
 from src.Services.ModelProcessingService import ModelProcessing
 from src.Services.CRSConverterService import CRSConverter
 from src.Services.ImageSaverService import ImageSaver
+from src.Services.VideoSplitter import VideoSplitter
 import random
 
 class AppProcessingCtrl(MediaProcessingInterface):
 
-    def __init__(self, is_image, typeRequestKey: str):
+    def __init__(self, typeRequestKey: str):
         self.__modelProcessingService = ModelProcessing(typeRequestKey)
-        self.__is_image = is_image
 
-    def MediaProcessing(self, request: Request):
-        if self.__is_image:
-            image = request.files['image']
-            return self.__imageProcessing(image, request.form["is_save_frame"], request.form["nameTable"])
+    def SplitVideo(self, request: Request, is_image: bool):
+        self.__videoSplitter = VideoSplitter('results/SplitVideos/', int(request.form['frameLimit']))
+        if not(is_image):
+            return {'frames_path': self.__videoSplitter.SplitVideo(request.form["video_path"])}
+
+    def MediaProcessing(self, request: Request, is_image: bool):
+        if is_image:
+            return self.__imageProcessing(request.files['image'], 
+                                          request.form["is_save_frame"], 
+                                          request.form["nameTable"])
         else:
-            video_path = request.form['video_path']
-            return self.__videoProcessing(video_path, request.form["is_save_frame"], request.form["nameTable"]) 
+            return self.__videoProcessing(request.form['video_path'], 
+                                          request.form["is_save_frame"],
+                                          request.form["nameTable"]) 
 
     def __videoProcessing(self, video_path, is_save, nameTable = None):
         data2send = []

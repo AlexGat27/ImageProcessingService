@@ -23,7 +23,7 @@ class UnityProcessingCtrl(MediaProcessingInterface):
 
         new_image_np = np.frombuffer(file, np.uint8)
 
-        result_image, potholesData, _ = self._modelService.DetectingObjects(new_image_np, "Unity")
+        result_image, potholesData = self._modelService.DetectingObjects(new_image_np)
         self._imageSaver.SaveImage(result_image)
         for pothole in potholesData:
             coord3857 = Pixels2MetresConverter.ConvertProcessing(pothole, camFieldOfView=cameraFieldOfView, 
