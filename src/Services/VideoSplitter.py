@@ -1,6 +1,5 @@
 import os
 import cv2
-from src.Services.ImageSaverService import ImageSaver
 
 class VideoSplitter:
     def __init__(self, resultsFolder, interval):

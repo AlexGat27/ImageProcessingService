@@ -13,7 +13,7 @@ class AppProcessingCtrl(MediaProcessingInterface):
         self.__modelProcessingService = ModelProcessing(typeRequestKey)
 
     def SplitVideo(self, request: Request, is_image: bool):
-        self.__videoSplitter = VideoSplitter('results/SplitVideos/', int(request.form['frameLimit']))
+        self.__videoSplitter = VideoSplitter(f'{ImagesSavedPath}/SplitVideos/', int(request.form['frameLimit']))
         if not(is_image):
             return {'frames_path': self.__videoSplitter.SplitVideo(request.form["video_path"])}
 
