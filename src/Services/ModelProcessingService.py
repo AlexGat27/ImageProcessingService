@@ -15,7 +15,7 @@ class ModelProcessing:
         image = PlatformHandler.ImageRequestTransform(self.__typeRequestKey, file)
 
         h, w, _ = image.shape
-
+        print(w, h)
         resized_image = cv2.resize(image, (640, 640))
         tensor_image = ToTensor()(resized_image).unsqueeze(0)
         result = self.model(tensor_image)[0]
