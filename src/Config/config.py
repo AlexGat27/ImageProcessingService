@@ -6,4 +6,4 @@ street = ['Ushakova', 'Kirovogradskaia', 'Naximova', 'Zakamskaia', 'Ribalko', 'A
 
 model_path = "Resources/best.pt"
 
-ImagesSavedPath = 'D:/Develop/Python/ImageProcessingService/results/'
+ImagesSavedPath = 'E:/Develop/Python/ImageProcessingService/results/'

@@ -18,7 +18,7 @@ class IOUHandler:
         return iou
 
     @staticmethod
-    def RemoveSmallBoxes(boxes: np.array, ioulimit):
+    def RemoveInnerBoxes(boxes: np.array, ioulimit):
         del_boxes_ids = []
         if boxes.shape[0] <= 1:
             return boxes    
@@ -34,5 +34,17 @@ class IOUHandler:
                         del_boxes_ids.append(i)
                     else:
                         del_boxes_ids.append(j)
+        boxes = np.delete(boxes, del_boxes_ids, axis=0)
+        return boxes
+    
+    @staticmethod
+    def RemoveSmallBigBoxes(boxes: np.array, imgShape: np.array, cropSquare):
+        del_boxes_ids = []
+        if boxes.shape[0] < 1:
+            return boxes 
+        for i in range(boxes.shape[0]):
+            if (boxes[i][0] * boxes[i][1] / (imgShape[0]*imgShape[1])) > (1 - cropSquare) or \
+            (boxes[i][0] * boxes[i][1] / (imgShape[0]*imgShape[1])) < cropSquare:
+                del_boxes_ids.append(i)
         boxes = np.delete(boxes, del_boxes_ids, axis=0)
         return boxes
