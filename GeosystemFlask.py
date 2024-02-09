@@ -14,4 +14,4 @@ def ImageProcessingMobile():
         return jsonify(response)
 
 if __name__ == '__main__':
-    geosystemMobileApp(debug=True, port=6001)
+    geosystemMobileApp.run(debug=True, port=6001)

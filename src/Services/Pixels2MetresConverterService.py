@@ -1,14 +1,14 @@
 import numpy as np
+from src.Models.Camera import Camera
 
 class Pixels2MetresConverter:
 
     @staticmethod
-    def ConvertProcessing(item_data: np.array, camResolution: np.array, 
-    camFieldOfView, camHeight, camAzimut):
+    def ConvertProcessing(item_data: np.array, cam: Camera):
         item_coords_image = Pixels2MetresConverter.__centralizeCoordsItems(item_data)
         item_coords_metres = Pixels2MetresConverter.__convertPixels2Metres(item_coords_image,
-        camResolution, camFieldOfView, camHeight)
-        items_coords_image_azumut = Pixels2MetresConverter.__applyAzimutTranformation(item_coords_metres, camAzimut)
+        cam.resolution, cam.fieldOfView, cam.height)
+        items_coords_image_azumut = Pixels2MetresConverter.__applyAzimutTranformation(item_coords_metres, cam.angle[2])
         return items_coords_image_azumut
 
 

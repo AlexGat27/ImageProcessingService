@@ -25,4 +25,4 @@ def SplitVideo():
     return jsonify(data2send)
 
 if __name__ == '__main__':
-    tkinterApp(debug=True, port=6002)
+    tkinterApp.run(debug=True, port=6002)
