@@ -11,7 +11,7 @@ class WebImageProcessingCtrl():
         self.response = {
             'status': 0,
             'message': None,
-            'potholesData': None,
+            'countPotholes': 0,
             'imageUrl': None
         }
         self.checkService = CheckSimilarImages()
@@ -41,18 +41,7 @@ class WebImageProcessingCtrl():
             self.response['message'] = 'Ошибка, ям не найдено'
             return self.response
         res_send = base64.b64encode(output_buffer).decode('utf-8')
-
-        potholesData = []
-        for i in range(countPotholes):
-            potholesData.append({
-                "nametable": "pothole",
-                "street": random.choice(config.street),
-                "lat": random.uniform(3360000, 3400000),
-                "lon": random.uniform(8370000, 8400000),
-                "class": random.randint(1,4)
-            })
-
+        self.response['countPotholes'] = countPotholes
         self.response['status'] = 200
         self.response['imageUrl'] = res_send
-        self.response['potholesData'] = potholesData
         return self.response
