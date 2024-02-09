@@ -11,4 +11,4 @@ def ImageProcessingUnity():
     return jsonify(data2send)
 
 if __name__ == '__main__':
-    unityApp(debug=True, port=6002)
+    unityApp.run(debug=True, port=6002)

@@ -4,6 +4,6 @@ support_model_ext = ['torchscript', 'pt', 'onnx', 'engine', 'mlmodel', 'pb', 'tf
 #Рандомные улицы
 street = ['Ushakova', 'Kirovogradskaia', 'Naximova', 'Zakamskaia', 'Ribalko', 'Astraxanskaia']
 
-model_path = "Resources/best.pt"
+model_path = "Resources/MidB16E30.pt"
 
 ImagesSavedPath = 'D:/Develop/Python/ImageProcessingService/results/'
