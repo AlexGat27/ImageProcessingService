@@ -1,4 +1,3 @@
-from Services.Pixels2MetresConverterService import Pixels2MetresConverter
 from src.Models.Camera import Camera
 from src.Controllers.MediaProcessingInterface import *
 from src.Config.config import ImagesSavedPath
@@ -7,6 +6,7 @@ from src.Services.ModelProcessingService import ModelProcessing
 from src.Services.CRSConverterService import CRSConverter
 from src.Services.ImageSaverService import ImageSaver
 from src.Services.VideoSplitter import VideoSplitter
+from src.Services.Pixels2MetresConverterService import Pixels2MetresConverter
 import random
 
 class AppProcessingCtrl(MediaProcessingInterface):
@@ -78,7 +78,7 @@ class AppProcessingCtrl(MediaProcessingInterface):
         image_array = np.asarray(bytearray(image_file.read()), dtype=np.uint8)  # Преобразуем изображение в массив байтов
         print(image_array)
         frame, boxes = self.__modelProcessingService.DetectingObjects(image_array) 
-
+        camera.resolution = frame.shape[:2]
         for box in boxes:
             coord3857 = Pixels2MetresConverter.ConvertProcessing(box, camera) + camera.coords
             coord4326 = CRSConverter.Epsg3857To4326(coord3857)
