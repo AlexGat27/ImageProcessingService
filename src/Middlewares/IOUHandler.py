@@ -3,7 +3,7 @@ import numpy as np
 class IOUHandler:
 
     @staticmethod
-    def IntersectionOverUnion(boxA, boxB):
+    def IntersectionOverUnion(boxA, boxB) -> float:
         xA = max(boxA[0], boxB[0])
         yA = max(boxA[1], boxB[1])
         xB = min(boxA[2], boxB[2])
@@ -18,14 +18,13 @@ class IOUHandler:
         return iou
 
     @staticmethod
-    def RemoveInnerBoxes(boxes: np.array, ioulimit):
+    def RemoveInnerBoxes(boxes: np.array, ioulimit) -> np.array:
         del_boxes_ids = []
         if boxes.shape[0] <= 1:
             return boxes    
         for i in range(boxes.shape[0] - 1):
             for j in range(i+1, boxes.shape[0]):
                 iou = IOUHandler.IntersectionOverUnion(boxes[i], boxes[j])
-                print("IOU: " + str(iou))
                 if iou > ioulimit:
                     area_i = (boxes[i][2] - boxes[i][0] + 1) * (boxes[i][3] - boxes[i][1] + 1)
                     area_j = (boxes[j][2] - boxes[j][0] + 1) * (boxes[j][3] - boxes[j][1] + 1)
@@ -38,7 +37,7 @@ class IOUHandler:
         return boxes
     
     @staticmethod
-    def RemoveSmallBigBoxes(boxes: np.array, imgShape: np.array, cropSquare):
+    def RemoveSmallBigBoxes(boxes: np.array, imgShape: np.array, cropSquare) -> np.array:
         del_boxes_ids = []
         if boxes.shape[0] < 1:
             return boxes 

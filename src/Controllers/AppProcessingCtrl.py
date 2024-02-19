@@ -21,11 +21,11 @@ class AppProcessingCtrl(MediaProcessingInterface):
 
     def MediaProcessing(self, req: Request, is_image: bool) -> list:
         if is_image:
-            camera = Camera(fieldOfView=req.form["fieldOfView"], height=req.form["height"],
-                            coords=np.array([req.form["camX"], req.form["camY"]]), 
-                            angle=np.array([0,0,req.form["angleZ"]]))
+            camera = Camera(fieldOfView=float(req.form["fieldOfView"]), height=float(req.form["height"]),
+                            coords=np.asarray([req.form["camX"], req.form["camY"]], float), 
+                            angle=np.asarray([0,0,req.form["angleZ"]], float))
             return self.__imageProcessing(req.files['image'], 
-                                          req.form["is_save_frame"], 
+                                          int(req.form["is_save_frame"]), 
                                           camera,
                                           req.form["nameTable"])
         else:
@@ -73,7 +73,7 @@ class AppProcessingCtrl(MediaProcessingInterface):
         cv2.destroyAllWindows()
         return data2send
 
-    def __imageProcessing(self, image_file, is_save: bool, camera: Camera, nameTable = None) -> list:
+    def __imageProcessing(self, image_file, is_save: int, camera: Camera, nameTable = None) -> list:
         data2send = []
         image_array = np.asarray(bytearray(image_file.read()), dtype=np.uint8)  # Преобразуем изображение в массив байтов
         print(image_array)
@@ -86,7 +86,8 @@ class AppProcessingCtrl(MediaProcessingInterface):
                         'crs3857': {'x': coord3857[0], 'y': coord3857[1]},
                         'crs4326': {'lon': coord4326[0], 'lat': coord4326[1]}
                     })
-        if is_save:
+        print(is_save)
+        if is_save == 1:
             imageSaver = ImageSaver(f'{ImagesSavedPath}/{nameTable}')
             frame = cv2.resize(frame, (frame.shape[1]//2, frame.shape[0]//2))
             imageSaver.SaveImage(frame)

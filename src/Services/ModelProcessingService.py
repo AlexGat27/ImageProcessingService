@@ -13,14 +13,13 @@ class ModelProcessing:
 
     def DetectingObjects(self, file):
         image = PlatformHandler.ImageRequestTransform(self.__typeRequestKey, file)
-
         h, w, _ = image.shape
         resized_image = cv2.resize(image, (640, 640))
         tensor_image = ToTensor()(resized_image).unsqueeze(0)
         result = self.model(tensor_image)[0]
 
         boxes_data = result.boxes.data.cpu().numpy()
-        boxes_data = IOUHandler.RemoveSmallBigBoxes(boxes_data, (w, h), 0.05)
+        boxes_data = IOUHandler.RemoveSmallBigBoxes(boxes_data, (w, h), 0.01)
         boxes_data = IOUHandler.RemoveInnerBoxes(boxes_data, self.__ioulimit)
         boxes_data[:, :4:2] = boxes_data[:, :4:2] / 640 * w
         boxes_data[:, 1:4:2] = boxes_data[:, 1:4:2] / 640 * h
