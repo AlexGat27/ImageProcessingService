@@ -10,12 +10,12 @@ def ImageProcessingTkinter():
     data2send = appCtrl.MediaProcessing(request, True)
     return jsonify(data2send)
     
-@tkinterApp.post('/videoProcessing')
-def ProcessVideo():
-    print('Get request from Application')
-    appCtrl = AppCtrl("VideoApp")
-    data2send = appCtrl.MediaProcessing(request, False)
-    return jsonify(data2send)
+# @tkinterApp.post('/videoProcessing')
+# def ProcessVideo():
+#     print('Get request from Application')
+#     appCtrl = AppCtrl("VideoApp")
+#     data2send = appCtrl.MediaProcessing(request, False)
+#     return jsonify(data2send)
 
 @tkinterApp.post('/videoSplit')
 def SplitVideo():

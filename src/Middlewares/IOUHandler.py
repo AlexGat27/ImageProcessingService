@@ -47,3 +47,12 @@ class IOUHandler:
                 del_boxes_ids.append(i)
         boxes = np.delete(boxes, del_boxes_ids, axis=0)
         return boxes
+
+    @staticmethod
+    def RemoveSmallCoefBoxes(boxes: np.array, confLim: float) -> np.array:
+        del_boxes_ids = [] 
+        for i, box in enumerate(boxes):
+            if box[5] < confLim:
+                del_boxes_ids.append(i)
+        boxes = np.delete(boxes, del_boxes_ids, axis=0)
+        return boxes
