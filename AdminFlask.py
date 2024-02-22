@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify, make_response
 from src.Controllers.AppProcessingCtrl import AppProcessingCtrl as AppCtrl
 
-tkinterApp = Flask("TkinterApp")
+adminApp = Flask("AdminApp")
 
-@tkinterApp.post('/imageProcessing')
-def ImageProcessingTkinter():
+@adminApp.post('/imageProcessing')
+def ImageProcessingAdmin():
     print('Get request from Application')
     appCtrl = AppCtrl("ImageApp")
     data2send = appCtrl.MediaProcessing(request, True)
@@ -17,7 +17,7 @@ def ImageProcessingTkinter():
 #     data2send = appCtrl.MediaProcessing(request, False)
 #     return jsonify(data2send)
 
-@tkinterApp.post('/videoSplit')
+@adminApp.post('/videoSplit')
 def SplitVideo():
     print('Get request from Application')
     appCtrl = AppCtrl("VideoApp")
@@ -25,4 +25,5 @@ def SplitVideo():
     return jsonify(data2send)
 
 if __name__ == '__main__':
-    tkinterApp.run(debug=True, port=6002)
+    # adminApp.run(debug=True, port=6002)
+    adminApp.run(host='0.0.0.0')
