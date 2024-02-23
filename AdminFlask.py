@@ -25,5 +25,4 @@ def SplitVideo():
     return jsonify(data2send)
 
 if __name__ == '__main__':
-    # adminApp.run(debug=True, port=6002)
-    adminApp.run(host='0.0.0.0')
+    adminApp.run(host='0.0.0.0', debug=True)
