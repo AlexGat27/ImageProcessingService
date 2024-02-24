@@ -1,12 +1,13 @@
-import os
-import cv2
-import numpy as np
-from datetime import datetime
+import os #Работа с файловой системой
+import cv2 #В данном сервисе используется для сохранения фото
+import numpy as np #Математические операции
+from datetime import datetime #Импорт для именования файлов фотографий исходя из времени
 
+#Класс сохранения фотографий
 class ImageSaver:
 
     @staticmethod
-    def SaveImage(image: np.array, nameFolder: str) -> str:
+    def SaveImage(image: np.array, nameFolder: str) -> str: #Статический метод сохранения фото
         saveFolder = os.getcwd() + f'/results/{nameFolder}'
         if (not(os.path.exists(saveFolder))):
             os.mkdir(saveFolder)
