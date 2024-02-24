@@ -1,6 +1,5 @@
 from src.Models.Camera import Camera
 from src.Controllers.MediaProcessingInterface import *
-from src.Config.config import ImagesSavedPath
 from src.Services.DistTracker import DistTracker 
 from src.Services.ModelProcessingService import ModelProcessing
 from src.Services.CRSConverterService import CRSConverter
@@ -15,7 +14,7 @@ class AppProcessingCtrl(MediaProcessingInterface):
         self.__modelProcessingService = ModelProcessing(typeRequestKey)
 
     def SplitVideo(self, request: Request, is_image: bool):
-        self.__videoSplitter = VideoSplitter(f'{ImagesSavedPath}/SplitVideos/', int(request.form['frameLimit']))
+        self.__videoSplitter = VideoSplitter('SplitVideos', int(request.form['frameLimit']))
         if not(is_image):
             return {'frames_path': self.__videoSplitter.SplitVideo(request.form["video_path"])}
 
@@ -76,9 +75,8 @@ class AppProcessingCtrl(MediaProcessingInterface):
         image_array = np.asarray(bytearray(image_file.read()), dtype=np.uint8)  # Преобразуем изображение в массив байтов
         frame, boxes = self.__modelProcessingService.DetectingObjects(image_array) 
         camera.resolution = frame.shape[:2]
-        imageSaver = ImageSaver(f'{ImagesSavedPath}\{nameTable}')
         frame = cv2.resize(frame, (frame.shape[1]//2, frame.shape[0]//2))
-        image_path = imageSaver.SaveImage(frame)
+        image_path = ImageSaver.SaveImage(frame, nameTable)
         for box in boxes:
             coord3857 = Pixels2MetresConverter.ConvertProcessing(box, camera) + camera.coords
             coord4326 = CRSConverter.Epsg3857To4326(coord3857)

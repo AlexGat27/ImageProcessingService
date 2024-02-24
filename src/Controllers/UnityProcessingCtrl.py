@@ -1,6 +1,5 @@
 from src.Models.Camera import Camera
 from src.Controllers.MediaProcessingInterface import *
-from src.Config.config import ImagesSavedPath
 from src.Services.ImageSaverService import ImageSaver
 from src.Services.ModelProcessingService import ModelProcessing
 from src.Services.CRSConverterService import CRSConverter
@@ -13,7 +12,6 @@ class UnityProcessingCtrl(MediaProcessingInterface):
                                     'crs4326': {'x': 0, 'y': 0}}])
         self._camera = Camera()
         self._modelService = ModelProcessing("Unity")
-        self._imageSaver = ImageSaver(f'{ImagesSavedPath}/UnityImages')
 
     def MediaProcessing(self, req: Request):
         file = req.files["image"].read()
@@ -26,7 +24,7 @@ class UnityProcessingCtrl(MediaProcessingInterface):
         new_image_np = np.frombuffer(file, np.uint8)
 
         result_image, potholesData = self._modelService.DetectingObjects(new_image_np)
-        self._imageSaver.SaveImage(result_image)
+        ImageSaver.SaveImage(result_image, "UnityImages")
         for pothole in potholesData:
             coord3857 = Pixels2MetresConverter.ConvertProcessing(pothole, self._camera) + self._camera.coords
             coord4326 = CRSConverter.Epsg3857To4326(coord3857)

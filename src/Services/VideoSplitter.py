@@ -8,7 +8,7 @@ class VideoSplitter:
 
     def SplitVideo(self, video_path: str):
         video_name = video_path.split('/')[-1].split('.')[0]
-        saveFolder = self.__resultsFolder + video_name
+        saveFolder = os.getcwd() + f'/results/{self.__resultsFolder}/{video_name}'
         if os.path.exists(saveFolder):
             saveFolder += '_' + str(len(os.listdir(self.__resultsFolder)))
         os.makedirs(saveFolder)

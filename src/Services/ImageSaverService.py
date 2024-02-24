@@ -1,15 +1,20 @@
 import os
 import cv2
 import numpy as np
+from datetime import datetime
 
 class ImageSaver:
 
-    def __init__(self, saveFolder=os.curdir):
-        self.saveFolder = saveFolder
-
-    def SaveImage(self, image: np.array) -> str:
-        if not(os.path.exists(self.saveFolder)):
-            os.makedirs(self.saveFolder)
-        countFiles = len(os.listdir(self.saveFolder))
-        cv2.imwrite(self.saveFolder + f'\process_image_{countFiles}.png', image)
-        return self.saveFolder + f'\process_image_{countFiles}.png'
+    @staticmethod
+    def SaveImage(image: np.array, nameFolder: str) -> str:
+        saveFolder = os.getcwd() + f'/results/{nameFolder}'
+        if (not(os.path.exists(saveFolder))):
+            os.mkdir(saveFolder)
+        countFiles = len(os.listdir(saveFolder))
+        image_name = f'image_{datetime.utcnow().strftime('%s')}_{countFiles}.png'
+        cv2.imwrite(f'{saveFolder}/{image_name}', image)
+        if (os.environ.get('save_path')):
+            print(f'{os.environ.get('save_path')}/{nameFolder}/{image_name}')
+            return f'{os.environ.get('save_path')}/{nameFolder}/{image_name}'
+        else:
+            return f'{saveFolder}/{image_name}'
