@@ -1,9 +1,10 @@
 import numpy as np
 
+#Класс обработки Bounding box
 class IOUHandler:
 
     @staticmethod
-    def IntersectionOverUnion(boxA, boxB) -> float:
+    def IntersectionOverUnion(boxA, boxB) -> float: #Метод рассчета пересечения bounding box
         xA = max(boxA[0], boxB[0])
         yA = max(boxA[1], boxB[1])
         xB = min(boxA[2], boxB[2])
@@ -15,29 +16,30 @@ class IOUHandler:
         boxBArea = (boxB[2] - boxB[0] + 1) * (boxB[3] - boxB[1] + 1)
 
         iou = interArea / float(boxAArea + boxBArea - interArea)
-        return iou
+        return iou #Возврат площади пересечения bounding box
 
     @staticmethod
-    def RemoveInnerBoxes(boxes: np.array, ioulimit) -> np.array:
-        del_boxes_ids = []
+    def RemoveInnerBoxes(boxes: np.array, ioulimit) -> np.array: #Метод удаления внутренних bounding box
+        del_boxes_ids = [] #Массив id bounding box для удаления
         if boxes.shape[0] <= 1:
             return boxes    
         for i in range(boxes.shape[0] - 1):
             for j in range(i+1, boxes.shape[0]):
-                iou = IOUHandler.IntersectionOverUnion(boxes[i], boxes[j])
-                if iou > ioulimit:
+                iou = IOUHandler.IntersectionOverUnion(boxes[i], boxes[j]) #Рассчет пересечения областей
+                if iou > ioulimit: #Если площадь больше максимальной, то рассчитать площадь обоих областей
                     area_i = (boxes[i][2] - boxes[i][0] + 1) * (boxes[i][3] - boxes[i][1] + 1)
                     area_j = (boxes[j][2] - boxes[j][0] + 1) * (boxes[j][3] - boxes[j][1] + 1)
                     
-                    if area_i < area_j:
+                    #Добавление индекса меньшей области
+                    if area_i < area_j: 
                         del_boxes_ids.append(i)
                     else:
                         del_boxes_ids.append(j)
-        boxes = np.delete(boxes, del_boxes_ids, axis=0)
+        boxes = np.delete(boxes, del_boxes_ids, axis=0) #Удаление лишних bounding box
         return boxes
     
     @staticmethod
-    def RemoveSmallBigBoxes(boxes: np.array, imgShape: np.array, cropSquare) -> np.array:
+    def RemoveSmallBigBoxes(boxes: np.array, imgShape: np.array, cropSquare) -> np.array: #Метод удаления слишком малых и слишком больших bounding box
         del_boxes_ids = []
         if boxes.shape[0] < 1:
             return boxes 
@@ -49,7 +51,7 @@ class IOUHandler:
         return boxes
 
     @staticmethod
-    def RemoveSmallCoefBoxes(boxes: np.array, confLim: float) -> np.array:
+    def RemoveSmallCoefBoxes(boxes: np.array, confLim: float) -> np.array: #Метод удаления bounding box с малым коэфициентом уверенности
         del_boxes_ids = [] 
         for i, box in enumerate(boxes):
             if box[5] < confLim:

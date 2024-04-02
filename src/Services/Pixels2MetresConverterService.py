@@ -1,14 +1,15 @@
-import numpy as np
-from src.Models.Camera import Camera
+import numpy as np #Импорт для математических операций
+from src.Models.Camera import Camera #Импорт модели камеры
 
+#Класс преобразования координат из пикселей в метры (EPSG3857)
 class Pixels2MetresConverter:
 
-    @staticmethod
-    def ConvertProcessing(item_data: np.array, cam: Camera):
-        item_coords_image = Pixels2MetresConverter.__centralizeCoordsItems(item_data)
+    @staticmethod 
+    def ConvertProcessing(item_data: np.array, cam: Camera): #Статический метод для последовательного вызова этапов преобразований
+        item_coords_image = Pixels2MetresConverter.__centralizeCoordsItems(item_data) #Получение координат центров bounding box
         item_coords_metres = Pixels2MetresConverter.__convertPixels2Metres(item_coords_image,
-        cam.resolution, cam.fieldOfView, cam.height)
-        items_coords_image_azumut = Pixels2MetresConverter.__applyAzimutTranformation(item_coords_metres, cam.angle[2])
+        cam.resolution, cam.fieldOfView, cam.height) #Преобразование из пикселей в метры
+        items_coords_image_azumut = Pixels2MetresConverter.__applyAzimutTranformation(item_coords_metres, cam.angle[2]) #Учет азимута
         return items_coords_image_azumut
 
 
