@@ -1,5 +1,4 @@
 import base64
-import random
 import src.Config.config as config
 from src.Controllers.MediaProcessingInterface import *
 from src.Services.ModelProcessingService import ModelProcessing
