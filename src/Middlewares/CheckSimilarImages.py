@@ -20,7 +20,7 @@ class CheckSimilarImages:
             vectorize_params = np.vectorize(lambda obj1, obj2: obj1.distance < obj2.distance * 0.75)
             good_matches = vectorize_params(matches[:,0], matches[:,1])
             print(np.count_nonzero(good_matches==True)/len(good_matches))
-            if np.count_nonzero(good_matches==True)/len(good_matches) > 0.1: 
+            if np.count_nonzero(good_matches==True)/len(good_matches) > 0.2: 
                 return True
         return False
   

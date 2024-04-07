@@ -17,7 +17,6 @@ class WebImageProcessingCtrl():
         self.modelProcessing = ModelProcessing("Web")
 
     def MediaProcessing(self, req: Request):
-        print(req.form.get('old_image_paths'))
         if 'image' not in req.files:
             self.response['status'] = 453
             self.response['message'] = "Неккоректный запрос. Изображения нет в параметрах запроса"

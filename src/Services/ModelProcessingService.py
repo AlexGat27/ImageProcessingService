@@ -11,19 +11,23 @@ class ModelProcessing:
         self.model = YOLO(config.model_path) #Модель 
         self.__ioulimit = 0.3 #Минимальное допустимое пересечение bounding box
         self.__typeRequestKey = typeRequest #Ключ платформы
+        self.__iouHandler = IOUHandler()
+        self.__platformHandler = PlatformHandler()
 
     #Обработка изображения моделью и получение bounding box 
     def DetectingObjects(self, file):
-        image = PlatformHandler.ImageRequestTransform(self.__typeRequestKey, file) #Изображение в нужном формате
+        image = self.__platformHandler.ImageRequestTransform(self.__typeRequestKey, file) #Изображение в нужном формате
         h, w, _ = image.shape
         resized_image = cv2.resize(image, (640, 640)) #Изменение размеров изображения под модель нейросети
         tensor_image = ToTensor()(resized_image).unsqueeze(0) #Преобразование numpy в тензор
         result = self.model(tensor_image)[0] #Обработка тензора моделью
 
         boxes_data = result.boxes.data.cpu().numpy() #Получение информации о bounding box
-        boxes_data = IOUHandler.RemoveSmallBigBoxes(boxes_data, (w, h), 0.01) #Удаление малых bounding box 
-        boxes_data = IOUHandler.RemoveInnerBoxes(boxes_data, self.__ioulimit) #Удаление внутренних bounding box
+        boxes_data = self.__iouHandler.RemoveSmallBigBoxes(boxes_data, (640, 640), 0.01) #Удаление малых bounding box 
+        boxes_data = self.__iouHandler.RemoveInnerBoxes(boxes_data, self.__ioulimit) #Удаление внутренних bounding box
+        boxes_data = self.__iouHandler.RemoveAroundBoxes(boxes_data, (640, 640), 0.2)
         #Преобразование координат вершин bounding box под оригинальный размер изображения
+        print(boxes_data)
         boxes_data[:, :4:2] = boxes_data[:, :4:2] / 640 * w
         boxes_data[:, 1:4:2] = boxes_data[:, 1:4:2] / 640 * h
         annotated_image = image.copy()
@@ -32,6 +36,6 @@ class ModelProcessing:
             x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
             annotated_image = cv2.rectangle(annotated_image, (x1, y1), (x2, y2), (255,0,0), 2)
 
-        return PlatformHandler.ImageResponseTransform(self.__typeRequestKey, annotated_image, boxes_data) #Возвращение данных в нужном формате
+        return self.__platformHandler.ImageResponseTransform(self.__typeRequestKey, annotated_image, boxes_data) #Возвращение данных в нужном формате
 
     
