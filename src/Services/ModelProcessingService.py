@@ -1,5 +1,6 @@
 import cv2 #Импорт для работы с изображениями
 import src.Config.config as config #Импорт для получения пути модели
+import src.Config.boxesConf as boxconfig
 from ultralytics import YOLO #Испорт для инициализации модели 
 from torchvision.transforms import ToTensor #Импорт для преобразования numpy изображения в тензор
 from src.Middlewares.IOUHandler import IOUHandler #Импорт для удаления лишних bounding box
@@ -23,9 +24,9 @@ class ModelProcessing:
         result = self.model(tensor_image)[0] #Обработка тензора моделью
 
         boxes_data = result.boxes.data.cpu().numpy() #Получение информации о bounding box
-        boxes_data = self.__iouHandler.RemoveSmallBigBoxes(boxes_data, (640, 640), 0.01) #Удаление малых bounding box 
+        boxes_data = self.__iouHandler.RemoveSmallBigBoxes(boxes_data, (640, 640), boxconfig.smallBigBoxesCoef) #Удаление малых bounding box 
         boxes_data = self.__iouHandler.RemoveInnerBoxes(boxes_data, self.__ioulimit) #Удаление внутренних bounding box
-        boxes_data = self.__iouHandler.RemoveAroundBoxes(boxes_data, (640, 640), 0.2)
+        boxes_data = self.__iouHandler.RemoveAroundBoxes(boxes_data, (640, 640), boxconfig.aroundBoxesCoef)
         #Преобразование координат вершин bounding box под оригинальный размер изображения
         print(boxes_data)
         boxes_data[:, :4:2] = boxes_data[:, :4:2] / 640 * w

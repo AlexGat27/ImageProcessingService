@@ -13,10 +13,14 @@ class AppProcessingCtrl(MediaProcessingInterface):
     def __init__(self, typeRequestKey: str):
         self.__modelProcessingService = ModelProcessing(typeRequestKey)
 
-    def SplitVideo(self, request: Request, is_image: bool):
-        self.__videoSplitter = VideoSplitter('SplitVideos', int(request.form['frameLimit']))
+    def SplitVideo(self, req: Request, is_image: bool):
+        camera = Camera(fieldOfView=float(req.form["fieldOfView"]), height=float(req.form["height"]),
+                        fps=float(req.form["fps"]), speed=float(req.form["speed"]))
+        if int(req.form["defaultInterval"]) > 10:
+            self.__videoSplitter = VideoSplitter('SplitVideos', camera, int(req.form["defaultInterval"]))
+        else: self.__videoSplitter = VideoSplitter('SplitVideos', camera)
         if not(is_image):
-            return {'frames_path': self.__videoSplitter.SplitVideo(request.form["video_path"])}
+            return {'frames_path': self.__videoSplitter.SplitVideo(req.form["video_path"])}
 
     def MediaProcessing(self, req: Request, is_image = True) -> list:
         if is_image:

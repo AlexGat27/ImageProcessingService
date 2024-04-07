@@ -1,18 +1,24 @@
 import os
 import cv2
+import numpy as np
+
+from src.Config.boxesConf import aroundBoxesCoef
+from src.Models.Camera import Camera
 
 class VideoSplitter:
-    def __init__(self, resultsFolder, interval):
+    def __init__(self, resultsFolder, cam: Camera, defaultInterval=None):
         self.__resultsFolder = resultsFolder
-        self.__interval = interval
+        if defaultInterval is None:
+            self.__interval = int(cam.fps * (2 * cam.height * np.tan(cam.fieldOfView / 2) * (1 - aroundBoxesCoef * 2)) / cam.speed)
+        else: self.__interval = defaultInterval
+        print(self.__interval)
 
     def SplitVideo(self, video_path: str):
         video_name = video_path.split('/')[-1].split('.')[0]
         saveFolder = os.getcwd() + f'/results/{self.__resultsFolder}/{video_name}'
         if os.path.exists(saveFolder):
-            saveFolder += '_' + str(len(os.listdir(self.__resultsFolder)))
+            saveFolder += '_' + str(len(os.listdir(os.getcwd() + f'/results/{self.__resultsFolder}')))
         os.makedirs(saveFolder)
-
         cap = cv2.VideoCapture(video_path)
         frameCount = 0
         while cap.isOpened():
