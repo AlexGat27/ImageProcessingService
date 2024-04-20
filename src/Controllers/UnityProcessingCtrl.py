@@ -1,38 +1,40 @@
-from src.Controllers.MediaProcessingInterface import *
-from src.Config.config import ImagesSavedPath
-from src.Services.ImageSaverService import ImageSaver
-from src.Services.ModelProcessingService import ModelProcessing
-from src.Services.CRSConverterService import CRSConverter
-from src.Services.Pixels2MetresConverterService import Pixels2MetresConverter
+from src.Models.Camera import Camera #Импорт модели камеры
+from src.Controllers.MediaProcessingInterface import * #Импорт интерфейса контроллеров
+from src.Services.ImageSaverService import ImageSaver #Импорт сервиса сохранения изображений
+from src.Services.ModelProcessingService import ModelProcessing #Импорт сервиса обработки изображений моделью 
+from src.Services.CRSConverterService import CRSConverter #Импорт сервиса преобразования СКС
+from src.Services.Pixels2MetresConverterService import Pixels2MetresConverter #Импорт сервиса преобразования пикселей в метры
 
-class UnityProcessingCtrl(MediaProcessingInterface):
+class UnityProcessingCtrl(MediaProcessingInterface): #Контроллер запросов, подаваемых с платформы Unity
 
     def __init__(self):
         self._data2send = np.array([{'crs3857': {'x': 0, 'y': 0},
-                                    'crs4326': {'x': 0, 'y': 0}}])
-        self._modelService = ModelProcessing("Unity")
-        self._imageSaver = ImageSaver(f'{ImagesSavedPath}/UnityImages')
+                                    'crs4326': {'x': 0, 'y': 0}}]) #Данные, передаваемые обратно на платформу Unity
+        self._camera = Camera() #Объект камеры
+        self._modelService = ModelProcessing("Unity") #Объект сервиса обработки изображений моделью
 
+    #Метод обработки данных с Unity
     def MediaProcessing(self, req: Request):
+        #Получение всех данных из запроса
         file = req.files["image"].read()
-        cameraFieldOfView = self._convertReqType(req.form["fieldOfView"], float)
-        cameraHeight = self._convertReqType(req.form["cameraHeight"], float)
-        cameraAzimut = self._convertReqType(req.form["cameraAzimut"], float)
-        cameraPosition3857 = self._convertReqType([req.form["cameraX"], req.form["cameraY"]], float)
-        screenResolution = self._convertReqType([req.form["screenWidth"], req.form["screenHeight"]], int)
+        self._camera.fieldOfView = self._convertReqType(req.form["fieldOfView"], float)
+        self._camera.height = self._convertReqType(req.form["cameraHeight"], float)
+        self._camera.angle[2] = self._convertReqType(req.form["cameraAzimut"], float)
+        self._camera.coords = self._convertReqType([req.form["cameraX"], req.form["cameraY"]], float)
+        self._camera.resolution = self._convertReqType([req.form["screenWidth"], req.form["screenHeight"]], int)
 
-        new_image_np = np.frombuffer(file, np.uint8)
+        new_image_np = np.frombuffer(file, np.uint8) #Получение numpy из буфера
 
-        result_image, potholesData = self._modelService.DetectingObjects(new_image_np)
-        self._imageSaver.SaveImage(result_image)
-        for pothole in potholesData:
-            coord3857 = Pixels2MetresConverter.ConvertProcessing(pothole, camFieldOfView=cameraFieldOfView, 
-            camAzimut=cameraAzimut, camHeight=cameraHeight, camResolution=screenResolution) + cameraPosition3857
+        result_image, potholesData = self._modelService.DetectingObjects(new_image_np) #Обработка изображения и получение данных о ямах
+        ImageSaver.SaveImage(result_image, "UnityImages") #Сохранение изображений
+        for pothole in potholesData: #Конвертация координат каждой обнаруженной ямы
+            coord3857 = Pixels2MetresConverter.ConvertProcessing(pothole, self._camera) + self._camera.coords
             coord4326 = CRSConverter.Epsg3857To4326(coord3857)
             self._data2send = np.append(self._data2send, {'crs3857': {'x': coord3857[0], 'y': coord3857[1]},
                                     'crs4326': {'x': coord4326[0], 'y': coord4326[1]}})
         return self._data2send[1:].tolist()
     
+    #Конвертация строк запроса в нужные форматы данных
     def _convertReqType(self, req, _type: type):
         if type(req) == str:
             splitStr = req.split(',')
