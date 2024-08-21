@@ -9,9 +9,10 @@ class VideoSplitter:
     def __init__(self, resultsFolder, cam: Camera, defaultInterval=None):
         self.__resultsFolder = resultsFolder
         if defaultInterval is None:
-            self.__interval = int(cam.fps * (2 * cam.height * np.tan(cam.fieldOfView / 2) * (1 - aroundBoxesCoef * 2)) / cam.speed)
+            print(cam)
+            self.__interval = int(cam.fps * (2 * cam.height * np.tan(cam.fieldOfView * np.pi / 360) * (1 - aroundBoxesCoef * 2)) / cam.speed)
         else: self.__interval = defaultInterval
-        print(self.__interval)
+        print(f"Интервал: {self.__interval}")
 
     def SplitVideo(self, video_path: str):
         video_name = video_path.split('/')[-1].split('.')[0]

@@ -17,11 +17,11 @@ class UnityProcessingCtrl(MediaProcessingInterface): #Контроллер за�
     def MediaProcessing(self, req: Request):
         #Получение всех данных из запроса
         file = req.files["image"].read()
-        self._camera.fieldOfView = self._convertReqType(req.form["fieldOfView"], float)
-        self._camera.height = self._convertReqType(req.form["cameraHeight"], float)
-        self._camera.angle[2] = self._convertReqType(req.form["cameraAzimut"], float)
-        self._camera.coords = self._convertReqType([req.form["cameraX"], req.form["cameraY"]], float)
-        self._camera.resolution = self._convertReqType([req.form["screenWidth"], req.form["screenHeight"]], int)
+        self._camera.fieldOfView = self.__convertReqType(req.form["fieldOfView"], float)
+        self._camera.height = self.__convertReqType(req.form["cameraHeight"], float)
+        self._camera.angle[2] = self.__convertReqType(req.form["cameraAzimut"], float)
+        self._camera.coords = self.__convertReqType([req.form["cameraX"], req.form["cameraY"]], float)
+        self._camera.resolution = self.__convertReqType([req.form["screenWidth"], req.form["screenHeight"]], int)
 
         new_image_np = np.frombuffer(file, np.uint8) #Получение numpy из буфера
 
@@ -35,7 +35,7 @@ class UnityProcessingCtrl(MediaProcessingInterface): #Контроллер за�
         return self._data2send[1:].tolist()
     
     #Конвертация строк запроса в нужные форматы данных
-    def _convertReqType(self, req, _type: type):
+    def __convertReqType(self, req, _type: type):
         if type(req) == str:
             splitStr = req.split(',')
             if len(splitStr) > 1:
@@ -43,11 +43,9 @@ class UnityProcessingCtrl(MediaProcessingInterface): #Контроллер за�
             else:
                 return _type(req)
         else:
+            print(req)
             splitStr1 = req[0].split(',')
             splitStr2 = req[1].split(',')
-            if len(splitStr1) > 1 or len(splitStr2) > 1:
-                return np.array([_type(splitStr1[0]) + _type(splitStr1[1])/pow(10, len(splitStr1[1])),
-                                 _type(splitStr2[0]) + _type(splitStr2[1])/pow(10, len(splitStr2[1]))])
-            else: return np.asarray(req, _type)
-    
-
+            value1 = _type(splitStr1[0]) + _type(splitStr1[1])/pow(10, len(splitStr1[1])) if len(splitStr1) > 1 else _type(splitStr1[0])
+            value2 = _type(splitStr2[0]) + _type(splitStr2[1])/pow(10, len(splitStr2[1])) if len(splitStr2) > 1 else _type(splitStr2[0])
+            return np.array([value1,value2])

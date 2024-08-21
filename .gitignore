@@ -173,3 +173,6 @@ __pycache__/
 
 *.png
 *.jpg
+
+results/*
+Resources/*

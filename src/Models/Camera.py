@@ -15,3 +15,6 @@ class Camera:
         self.resolution = resolution
         self.fps = fps
         self.speed = speed
+
+    def __str__(self):
+        return f'Height: {self.height}\nField of view: {self.fieldOfView}\nCoords: {self.coords}\nAngle: {self.angle}\nResolution: {self.resolution}\nFPS: {self.fps}\nSpeed: {self.speed}\n'
